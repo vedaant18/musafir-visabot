@@ -1,0 +1,15 @@
+# Environments
+.env
+
+# __pycache__
+__pycache__/
+*.py[cod]
+
+# Data / DB
+pgdata/
+*.sqlite3
+
+# Python virtual environment
+venv/
+env/
+.venv/

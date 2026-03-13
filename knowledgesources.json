@@ -1,0 +1,29 @@
+[
+  {
+    "_id": "SRC_AE_001",
+    "destinationCountryCode": "AE",
+    "sourceType": "government",
+    "title": "AE visa snapshot",
+    "chunkId": "AE_CH_001",
+    "text": "Baseline docs include passport copy and photograph. Some cases require bank statement.",
+    "trustScore": 0.9
+  },
+  {
+    "_id": "SRC_SA_001",
+    "destinationCountryCode": "SA",
+    "sourceType": "government",
+    "title": "SA visa snapshot",
+    "chunkId": "SA_CH_001",
+    "text": "Tourist evisa available for eligible residents. Document rules vary by traveler profile.",
+    "trustScore": 0.9
+  },
+  {
+    "_id": "SRC_TR_001",
+    "destinationCountryCode": "TR",
+    "sourceType": "government",
+    "title": "TR visa snapshot",
+    "chunkId": "TR_CH_001",
+    "text": "Travel insurance and bank statement are common requirements. Schengen holders may use evisa for tourist.",
+    "trustScore": 0.9
+  }
+]

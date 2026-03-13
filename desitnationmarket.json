@@ -1,0 +1,431 @@
+[
+  {
+    "_id": "CFG_AE_MUSAFIR_IN_v1",
+    "destinationCountryCode": "AE",
+    "market": "MUSAFIR_IN",
+    "version": 1,
+    "status": "active",
+    "effectiveFrom": "2026-02-01",
+    "effectiveTo": null,
+    "minimumDocuments": [
+      {
+        "docCode": "passport_copy",
+        "mandatory": true,
+        "notes": "Must be valid 6+ months"
+      },
+      {
+        "docCode": "photograph",
+        "mandatory": true,
+        "notes": "White background"
+      },
+      {
+        "docCode": "flight_itinerary",
+        "mandatory": true,
+        "notes": "Confirmed booking"
+      },
+      {
+        "docCode": "hotel_booking",
+        "mandatory": true,
+        "notes": "Required unless staying with family"
+      }
+    ],
+    "visaModeRules": [
+      {
+        "ruleId": "AE_VMR_001",
+        "ruleName": "Schengen holders can use evisa",
+        "conditions": {
+          "nationalityIn": [
+            "IN",
+            "PH",
+            "PK"
+          ],
+          "residencyCountryIn": [
+            "AE",
+            "SA",
+            "QA",
+            "KW",
+            "BH",
+            "OM"
+          ],
+          "hasVisaOrPermitIn": [
+            "SCHENGEN"
+          ]
+        },
+        "visaMode": "evisa",
+        "applicableSkuCodes": [
+          "AE_TOUR_30D_SGL_STD_001",
+          "AE_TOUR_30D_SGL_EXP_001"
+        ],
+        "priority": 30
+      },
+      {
+        "ruleId": "AE_VMR_002",
+        "ruleName": "Nigeria passport not applicable for tourist evisa",
+        "conditions": {
+          "nationalityIn": [
+            "NG"
+          ]
+        },
+        "visaMode": "not_applicable",
+        "applicableSkuCodes": [
+          "AE_TOUR_30D_SGL_STD_001",
+          "AE_TOUR_30D_SGL_EXP_001"
+        ],
+        "priority": 100
+      }
+    ],
+    "documentRules": [
+      {
+        "ruleId": "AE_DR_001",
+        "ruleName": "Indian travelers require bank statement",
+        "conditions": {
+          "nationalityIn": [
+            "IN"
+          ]
+        },
+        "additionalDocuments": [
+          {
+            "docCode": "bank_statement",
+            "mandatory": true,
+            "notes": "Last 3 months"
+          }
+        ],
+        "applicableSkuCodes": [
+          "AE_TOUR_30D_SGL_STD_001",
+          "AE_TOUR_30D_SGL_EXP_001",
+          "AE_STUD_90D_SGL_STD_001",
+          "AE_STUD_90D_SGL_EXP_001"
+        ],
+        "priority": 50
+      },
+      {
+        "ruleId": "AE_DR_002",
+        "ruleName": "GCC residents do not need bank statement",
+        "conditions": {
+          "nationalityIn": [
+            "IN"
+          ],
+          "residencyCountryIn": [
+            "AE",
+            "SA",
+            "QA",
+            "KW",
+            "BH",
+            "OM"
+          ]
+        },
+        "removeDocuments": [
+          "bank_statement"
+        ],
+        "applicableSkuCodes": [
+          "AE_TOUR_30D_SGL_STD_001",
+          "AE_TOUR_30D_SGL_EXP_001",
+          "AE_STUD_90D_SGL_STD_001",
+          "AE_STUD_90D_SGL_EXP_001"
+        ],
+        "priority": 60
+      },
+      {
+        "ruleId": "AE_DR_003",
+        "ruleName": "If staying with family hotel booking becomes optional",
+        "conditions": {
+          "stayingWithFamily": true
+        },
+        "setMandatory": [
+          {
+            "docCode": "hotel_booking",
+            "mandatory": false,
+            "notes": "Not needed if staying with family"
+          }
+        ],
+        "applicableSkuCodes": [
+          "AE_TOUR_30D_SGL_STD_001",
+          "AE_TOUR_30D_SGL_EXP_001",
+          "AE_STUD_90D_SGL_STD_001",
+          "AE_STUD_90D_SGL_EXP_001"
+        ],
+        "priority": 70
+      }
+    ],
+    "pricingAdjustments": [
+      {
+        "ruleId": "AE_PA_001",
+        "ruleName": "GCC residency surcharge",
+        "conditions": {
+          "residencyCountryIn": [
+            "AE",
+            "SA",
+            "QA",
+            "KW",
+            "BH",
+            "OM"
+          ]
+        },
+        "adjustment": {
+          "type": "add_amount",
+          "currency": "AED",
+          "value": 17
+        },
+        "applicableSkuCodes": [
+          "AE_TOUR_30D_SGL_STD_001",
+          "AE_TOUR_30D_SGL_EXP_001",
+          "AE_STUD_90D_SGL_STD_001",
+          "AE_STUD_90D_SGL_EXP_001"
+        ],
+        "priority": 40
+      }
+    ],
+    "updatedAt": "2026-02-26T10:00:00Z"
+  },
+  {
+    "_id": "CFG_SA_MUSAFIR_IN_v1",
+    "destinationCountryCode": "SA",
+    "market": "MUSAFIR_IN",
+    "version": 1,
+    "status": "active",
+    "effectiveFrom": "2026-02-01",
+    "effectiveTo": null,
+    "minimumDocuments": [
+      {
+        "docCode": "passport_copy",
+        "mandatory": true,
+        "notes": "Must be valid 6+ months"
+      },
+      {
+        "docCode": "photograph",
+        "mandatory": true,
+        "notes": "White background"
+      },
+      {
+        "docCode": "hotel_booking",
+        "mandatory": true,
+        "notes": "Required unless staying with family"
+      }
+    ],
+    "visaModeRules": [
+      {
+        "ruleId": "SA_VMR_001",
+        "ruleName": "GCC residents eligible for evisa",
+        "conditions": {
+          "residencyCountryIn": [
+            "AE",
+            "SA",
+            "QA",
+            "KW",
+            "BH",
+            "OM"
+          ]
+        },
+        "visaMode": "evisa",
+        "applicableSkuCodes": [
+          "SA_TOUR_30D_SGL_STD_001",
+          "SA_TOUR_30D_SGL_EXP_001"
+        ],
+        "priority": 50
+      }
+    ],
+    "documentRules": [
+      {
+        "ruleId": "SA_DR_001",
+        "ruleName": "Pakistan travelers require invitation letter",
+        "conditions": {
+          "nationalityIn": [
+            "PK"
+          ]
+        },
+        "additionalDocuments": [
+          {
+            "docCode": "invitation_letter",
+            "mandatory": true,
+            "notes": "From host or sponsor"
+          }
+        ],
+        "applicableSkuCodes": [
+          "SA_TOUR_30D_SGL_STD_001",
+          "SA_TOUR_30D_SGL_EXP_001",
+          "SA_STUD_90D_SGL_STD_001",
+          "SA_STUD_90D_SGL_EXP_001"
+        ],
+        "priority": 40
+      },
+      {
+        "ruleId": "SA_DR_002",
+        "ruleName": "Student purpose requires university admission letter",
+        "conditions": {},
+        "additionalDocuments": [
+          {
+            "docCode": "university_admission_letter",
+            "mandatory": true,
+            "notes": "Issued by the university"
+          }
+        ],
+        "applicableSkuCodes": [
+          "SA_STUD_90D_SGL_STD_001",
+          "SA_STUD_90D_SGL_EXP_001"
+        ],
+        "priority": 80
+      },
+      {
+        "ruleId": "SA_DR_003",
+        "ruleName": "Canary document rule for evaluation",
+        "conditions": {
+          "nationalityIn": [
+            "PH"
+          ],
+          "residencyCountryIn": [
+            "IN"
+          ]
+        },
+        "additionalDocuments": [
+          {
+            "docCode": "employment_letter_v2",
+            "mandatory": true,
+            "notes": "Specific format required"
+          }
+        ],
+        "applicableSkuCodes": [
+          "SA_TOUR_30D_SGL_STD_001",
+          "SA_TOUR_30D_SGL_EXP_001"
+        ],
+        "priority": 90
+      }
+    ],
+    "pricingAdjustments": [
+      {
+        "ruleId": "SA_PA_001",
+        "ruleName": "Family travel group package fee",
+        "conditions": {
+          "travelGroupIn": [
+            "family"
+          ]
+        },
+        "adjustment": {
+          "type": "add_amount",
+          "currency": "AED",
+          "value": 25
+        },
+        "applicableSkuCodes": [
+          "SA_TOUR_30D_SGL_STD_001",
+          "SA_TOUR_30D_SGL_EXP_001",
+          "SA_STUD_90D_SGL_STD_001",
+          "SA_STUD_90D_SGL_EXP_001"
+        ],
+        "priority": 30
+      }
+    ],
+    "updatedAt": "2026-02-26T10:00:00Z"
+  },
+  {
+    "_id": "CFG_TR_MUSAFIR_IN_v1",
+    "destinationCountryCode": "TR",
+    "market": "MUSAFIR_IN",
+    "version": 1,
+    "status": "active",
+    "effectiveFrom": "2026-02-01",
+    "effectiveTo": null,
+    "minimumDocuments": [
+      {
+        "docCode": "passport_copy",
+        "mandatory": true,
+        "notes": "Must be valid 6+ months"
+      },
+      {
+        "docCode": "photograph",
+        "mandatory": true,
+        "notes": "White background"
+      },
+      {
+        "docCode": "bank_statement",
+        "mandatory": true,
+        "notes": "Last 6 months"
+      },
+      {
+        "docCode": "travel_insurance",
+        "mandatory": true,
+        "notes": "Coverage required"
+      }
+    ],
+    "visaModeRules": [
+      {
+        "ruleId": "TR_VMR_001",
+        "ruleName": "Schengen holders can use evisa for tourist",
+        "conditions": {
+          "hasVisaOrPermitIn": [
+            "SCHENGEN"
+          ]
+        },
+        "visaMode": "evisa",
+        "applicableSkuCodes": [
+          "TR_TOUR_30D_SGL_STD_001",
+          "TR_TOUR_30D_SGL_EXP_001"
+        ],
+        "priority": 60
+      }
+    ],
+    "documentRules": [
+      {
+        "ruleId": "TR_DR_001",
+        "ruleName": "If residency is UAE bank statement reduces to 3 months",
+        "conditions": {
+          "residencyCountryIn": [
+            "AE"
+          ]
+        },
+        "modifyDocuments": [
+          {
+            "docCode": "bank_statement",
+            "notes": "Last 3 months"
+          }
+        ],
+        "applicableSkuCodes": [
+          "TR_TOUR_30D_SGL_STD_001",
+          "TR_TOUR_30D_SGL_EXP_001",
+          "TR_STUD_90D_SGL_STD_001",
+          "TR_STUD_90D_SGL_EXP_001"
+        ],
+        "priority": 70
+      },
+      {
+        "ruleId": "TR_DR_002",
+        "ruleName": "Student purpose requires education certificate",
+        "conditions": {},
+        "additionalDocuments": [
+          {
+            "docCode": "education_certificate",
+            "mandatory": true,
+            "notes": "Highest qualification"
+          }
+        ],
+        "applicableSkuCodes": [
+          "TR_STUD_90D_SGL_STD_001",
+          "TR_STUD_90D_SGL_EXP_001"
+        ],
+        "priority": 80
+      }
+    ],
+    "pricingAdjustments": [
+      {
+        "ruleId": "TR_PA_001",
+        "ruleName": "Discount for UAE residents",
+        "conditions": {
+          "residencyCountryIn": [
+            "AE"
+          ]
+        },
+        "adjustment": {
+          "type": "subtract_amount",
+          "currency": "AED",
+          "value": 13
+        },
+        "applicableSkuCodes": [
+          "TR_TOUR_30D_SGL_STD_001",
+          "TR_TOUR_30D_SGL_EXP_001",
+          "TR_STUD_90D_SGL_STD_001",
+          "TR_STUD_90D_SGL_EXP_001"
+        ],
+        "priority": 50
+      }
+    ],
+    "updatedAt": "2026-02-26T10:00:00Z"
+  }
+]

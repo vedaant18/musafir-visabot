@@ -1,0 +1,260 @@
+[
+  {
+    "_id": "DEST_AE",
+    "destinationCountryCode": "AE",
+    "destinationCountryName": "United Arab Emirates",
+    "interests": [
+      "city",
+      "beach",
+      "shopping"
+    ],
+    "popularityScore": 0.92,
+    "minProcessingDays": 2,
+    "startingPrice": {
+      "currency": "AED",
+      "amount": 250
+    },
+    "hasSkusInPoc": true,
+    "updatedAt": "2026-02-26T10:00:00Z"
+  },
+  {
+    "_id": "DEST_SA",
+    "destinationCountryCode": "SA",
+    "destinationCountryName": "Saudi Arabia",
+    "interests": [
+      "historical",
+      "city",
+      "nature"
+    ],
+    "popularityScore": 0.76,
+    "minProcessingDays": 3,
+    "startingPrice": {
+      "currency": "AED",
+      "amount": 320
+    },
+    "hasSkusInPoc": true,
+    "updatedAt": "2026-02-26T10:00:00Z"
+  },
+  {
+    "_id": "DEST_TR",
+    "destinationCountryCode": "TR",
+    "destinationCountryName": "Turkey",
+    "interests": [
+      "historical",
+      "city",
+      "beach"
+    ],
+    "popularityScore": 0.88,
+    "minProcessingDays": 4,
+    "startingPrice": {
+      "currency": "AED",
+      "amount": 340
+    },
+    "hasSkusInPoc": true,
+    "updatedAt": "2026-02-26T10:00:00Z"
+  },
+  {
+    "_id": "DEST_GE",
+    "destinationCountryCode": "GE",
+    "destinationCountryName": "Georgia",
+    "interests": [
+      "nature",
+      "city"
+    ],
+    "popularityScore": 0.79,
+    "minProcessingDays": 5,
+    "startingPrice": {
+      "currency": "AED",
+      "amount": 180
+    },
+    "hasSkusInPoc": false,
+    "updatedAt": "2026-02-26T10:00:00Z"
+  },
+  {
+    "_id": "DEST_AZ",
+    "destinationCountryCode": "AZ",
+    "destinationCountryName": "Azerbaijan",
+    "interests": [
+      "city",
+      "nightlife"
+    ],
+    "popularityScore": 0.74,
+    "minProcessingDays": 5,
+    "startingPrice": {
+      "currency": "AED",
+      "amount": 200
+    },
+    "hasSkusInPoc": false,
+    "updatedAt": "2026-02-26T10:00:00Z"
+  },
+  {
+    "_id": "DEST_TH",
+    "destinationCountryCode": "TH",
+    "destinationCountryName": "Thailand",
+    "interests": [
+      "beach",
+      "nightlife"
+    ],
+    "popularityScore": 0.9,
+    "minProcessingDays": 6,
+    "startingPrice": {
+      "currency": "AED",
+      "amount": 260
+    },
+    "hasSkusInPoc": false,
+    "updatedAt": "2026-02-26T10:00:00Z"
+  },
+  {
+    "_id": "DEST_SG",
+    "destinationCountryCode": "SG",
+    "destinationCountryName": "Singapore",
+    "interests": [
+      "city",
+      "shopping"
+    ],
+    "popularityScore": 0.81,
+    "minProcessingDays": 7,
+    "startingPrice": {
+      "currency": "AED",
+      "amount": 420
+    },
+    "hasSkusInPoc": false,
+    "updatedAt": "2026-02-26T10:00:00Z"
+  },
+  {
+    "_id": "DEST_ID",
+    "destinationCountryCode": "ID",
+    "destinationCountryName": "Indonesia",
+    "interests": [
+      "beach",
+      "nature"
+    ],
+    "popularityScore": 0.84,
+    "minProcessingDays": 6,
+    "startingPrice": {
+      "currency": "AED",
+      "amount": 240
+    },
+    "hasSkusInPoc": false,
+    "updatedAt": "2026-02-26T10:00:00Z"
+  },
+  {
+    "_id": "DEST_MY",
+    "destinationCountryCode": "MY",
+    "destinationCountryName": "Malaysia",
+    "interests": [
+      "city",
+      "nature"
+    ],
+    "popularityScore": 0.77,
+    "minProcessingDays": 6,
+    "startingPrice": {
+      "currency": "AED",
+      "amount": 230
+    },
+    "hasSkusInPoc": false,
+    "updatedAt": "2026-02-26T10:00:00Z"
+  },
+  {
+    "_id": "DEST_LK",
+    "destinationCountryCode": "LK",
+    "destinationCountryName": "Sri Lanka",
+    "interests": [
+      "beach",
+      "nature"
+    ],
+    "popularityScore": 0.68,
+    "minProcessingDays": 7,
+    "startingPrice": {
+      "currency": "AED",
+      "amount": 170
+    },
+    "hasSkusInPoc": false,
+    "updatedAt": "2026-02-26T10:00:00Z"
+  },
+  {
+    "_id": "DEST_MV",
+    "destinationCountryCode": "MV",
+    "destinationCountryName": "Maldives",
+    "interests": [
+      "beach",
+      "luxury"
+    ],
+    "popularityScore": 0.73,
+    "minProcessingDays": 7,
+    "startingPrice": {
+      "currency": "AED",
+      "amount": 520
+    },
+    "hasSkusInPoc": false,
+    "updatedAt": "2026-02-26T10:00:00Z"
+  },
+  {
+    "_id": "DEST_JP",
+    "destinationCountryCode": "JP",
+    "destinationCountryName": "Japan",
+    "interests": [
+      "city",
+      "historical"
+    ],
+    "popularityScore": 0.86,
+    "minProcessingDays": 10,
+    "startingPrice": {
+      "currency": "AED",
+      "amount": 650
+    },
+    "hasSkusInPoc": false,
+    "updatedAt": "2026-02-26T10:00:00Z"
+  },
+  {
+    "_id": "DEST_KR",
+    "destinationCountryCode": "KR",
+    "destinationCountryName": "South Korea",
+    "interests": [
+      "city",
+      "historical"
+    ],
+    "popularityScore": 0.8,
+    "minProcessingDays": 9,
+    "startingPrice": {
+      "currency": "AED",
+      "amount": 600
+    },
+    "hasSkusInPoc": false,
+    "updatedAt": "2026-02-26T10:00:00Z"
+  },
+  {
+    "_id": "DEST_IT",
+    "destinationCountryCode": "IT",
+    "destinationCountryName": "Italy",
+    "interests": [
+      "historical",
+      "city"
+    ],
+    "popularityScore": 0.78,
+    "minProcessingDays": 12,
+    "startingPrice": {
+      "currency": "AED",
+      "amount": 700
+    },
+    "hasSkusInPoc": false,
+    "updatedAt": "2026-02-26T10:00:00Z"
+  },
+  {
+    "_id": "DEST_ES",
+    "destinationCountryCode": "ES",
+    "destinationCountryName": "Spain",
+    "interests": [
+      "beach",
+      "historical"
+    ],
+    "popularityScore": 0.75,
+    "minProcessingDays": 12,
+    "startingPrice": {
+      "currency": "AED",
+      "amount": 680
+    },
+    "hasSkusInPoc": false,
+    "updatedAt": "2026-02-26T10:00:00Z"
+  }
+]

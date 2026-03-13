@@ -1,0 +1,28 @@
+services:
+  # ── PostgreSQL Database (with pgvector) ──
+  - type: psql
+    name: visabot-db
+    plan: free # Change to starter for production
+    postgresMajorVersion: 16
+    
+  # ── Web Application ──
+  - type: web
+    name: visa-ragbot-api
+    env: docker
+    plan: free # Change to starter for production
+    healthCheckPath: /health
+    autoDeploy: false
+    envVars:
+      # Inject the connection URL from the database we just created
+      - key: DATABASE_URL
+        fromDatabase:
+          name: visabot-db
+          property: connectionString
+      # Used for synchronous scripts like seed.py
+      - key: SYNC_DATABASE_URL
+        fromDatabase:
+          name: visabot-db
+          property: connectionString
+      # The Gemini API Key needs to be manually set in the Render Dashboard
+      - key: GEMINI_API_KEY
+        sync: false

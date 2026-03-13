@@ -1,0 +1,1096 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Visa Sourcing Chatbot</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #F7F5F3;
+            --bg-secondary: #FFFFFF;
+            --bg-card: #FFFFFF;
+            --bg-input: #FFFFFF;
+            --border: #E5E7EB;
+            --border-hover: #1199ee;
+            --accent: #FFDD00;
+            --accent-hover: #F0C800;
+            --accent-glow: rgba(255, 221, 0, 0.4);
+            --brand-blue: #1199ee;
+            --text-primary: #343332;
+            --text-secondary: #6b7280;
+            --text-muted: #9ca3af;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --info: #3b82f6;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ── Ambient Background ── */
+        .ambient-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .ambient-bg .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.15;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        .ambient-bg .orb:nth-child(1) {
+            width: 500px;
+            height: 500px;
+            background: rgba(17, 153, 238, 0.15);
+            top: -100px;
+            left: -100px;
+            animation-delay: 0s;
+        }
+
+        .ambient-bg .orb:nth-child(2) {
+            width: 400px;
+            height: 400px;
+            background: rgba(255, 221, 0, 0.15);
+            top: 50%;
+            right: -100px;
+            animation-delay: -7s;
+        }
+
+        .ambient-bg .orb:nth-child(3) {
+            width: 350px;
+            height: 350px;
+            background: rgba(17, 153, 238, 0.1);
+            bottom: -50px;
+            left: 30%;
+            animation-delay: -14s;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            33% {
+                transform: translate(30px, -40px) scale(1.05);
+            }
+
+            66% {
+                transform: translate(-20px, 30px) scale(0.95);
+            }
+        }
+
+        /* ── Layout ── */
+        .app-container {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+        }
+
+        /* ── Sidebar ── */
+        .sidebar {
+            width: 320px;
+            flex-shrink: 0;
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding-bottom: 20px;
+        }
+
+        .logo-icon {
+            width: 44px;
+            height: 44px;
+            background: var(--brand-blue);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            box-shadow: 0 4px 15px rgba(17, 153, 238, 0.3);
+            color: #ffffff;
+        }
+
+        .sidebar-header h1 {
+            font-size: 16px;
+            font-weight: 600;
+            line-height: 1.3;
+        }
+
+        .sidebar-header h1 span {
+            display: block;
+            font-size: 11px;
+            font-weight: 400;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .context-section {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 16px;
+        }
+
+        .section-label {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .field-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .field-group label {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .field-group input,
+        .field-group select {
+            width: 100%;
+            min-width: 0;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 9px 12px;
+            color: var(--text-primary);
+            font-size: 13px;
+            font-family: inherit;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .field-group input:focus,
+        .field-group select:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+
+        .field-group select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2394a3b8' viewBox='0 0 16 16'%3E%3Cpath d='M4.5 5.5l3.5 4 3.5-4z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            padding-right: 32px;
+        }
+
+        .field-group select option {
+            background: var(--bg-input);
+            color: var(--text-primary);
+        }
+
+        .field-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .checkbox-field {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 0;
+        }
+
+        .checkbox-field input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: var(--accent);
+            cursor: pointer;
+        }
+
+        .checkbox-field label {
+            font-size: 13px;
+            color: var(--text-secondary);
+            cursor: pointer;
+        }
+
+        .tags-input-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            padding: 6px 8px;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            min-height: 38px;
+            align-items: center;
+            cursor: text;
+            transition: border-color 0.2s;
+        }
+
+        .tags-input-container:focus-within {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+
+        .tag {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            background: var(--brand-blue);
+            color: white;
+            border-radius: 5px;
+            padding: 3px 8px;
+            font-size: 11px;
+            font-weight: 500;
+            animation: tagIn 0.2s ease;
+        }
+
+        @keyframes tagIn {
+            from {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+        }
+
+        .tag .tag-remove {
+            cursor: pointer;
+            font-size: 14px;
+            line-height: 1;
+            opacity: 0.7;
+            transition: opacity 0.15s;
+        }
+
+        .tag .tag-remove:hover {
+            opacity: 1;
+        }
+
+        .tags-input-container input,
+        .tags-input-container select {
+            border: none;
+            background: none;
+            color: var(--text-primary);
+            font-size: 12px;
+            outline: none;
+            flex: 1;
+            min-width: 60px;
+        }
+
+        .tags-input-container select {
+            cursor: pointer;
+        }
+
+        .tags-input-container select option {
+            background: var(--bg-input);
+            color: var(--text-primary);
+        }
+
+        .status-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 14px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 500;
+            margin-top: auto;
+        }
+
+        .status-badge.connected {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.25);
+            color: var(--success);
+        }
+
+        .status-badge.disconnected {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.25);
+            color: var(--danger);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .connected .status-dot {
+            background: var(--success);
+        }
+
+        .disconnected .status-dot {
+            background: var(--danger);
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.4;
+            }
+        }
+
+        /* ── Chat Area ── */
+        .chat-area {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            height: 100%;
+            position: relative;
+        }
+
+        .chat-header {
+            display: none; /* Hide top bar to make it cleaner */
+        }
+
+        .chat-header h2 {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .chat-header p {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 3px;
+        }
+
+        .messages-container {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 32px 24px 0 24px;
+            scroll-behavior: smooth;
+        }
+
+        .chat-feed-wrapper {
+            width: 100%;
+            max-width: 800px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            padding-bottom: 160px; /* Space for totally floating input */
+        }
+
+        .message {
+            display: flex;
+            gap: 16px;
+            width: 100%;
+            animation: messageIn 0.3s ease-out forwards;
+            opacity: 0;
+        }
+
+        @keyframes messageIn {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .user .message-avatar {
+            background: #2563eb;
+            display: none; /* Hide avatar for user to match clean AI UIs */
+        }
+
+        .bot .message-avatar {
+            background: var(--accent);
+            box-shadow: 0 0 10px var(--accent-glow);
+            color: var(--text-primary);
+        }
+
+        .message-content {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            flex: 1;
+            max-width: 85%;
+        }
+
+        .user .message-content {
+            margin-left: auto;
+            align-items: flex-end;
+        }
+
+        .message-bubble {
+            font-size: 15px;
+            line-height: 1.6;
+            color: var(--text-primary);
+        }
+
+        .user .message-bubble {
+            background: var(--brand-blue);
+            color: #ffffff;
+            padding: 12px 18px;
+            border-radius: 20px;
+            border-bottom-right-radius: 4px;
+        }
+
+        .bot .message-bubble {
+            background: transparent;
+            padding: 6px 0; /* Inline feel */
+        }
+
+        .message-meta {
+            font-size: 11px;
+            color: var(--text-muted);
+            opacity: 0.6;
+        }
+
+        /* ── Typing Indicator ── */
+        .typing-indicator {
+            display: flex;
+            gap: 4px;
+            padding: 16px 18px;
+        }
+
+        .typing-indicator span {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--text-muted);
+            animation: typing 1.4s ease-in-out infinite;
+        }
+
+        .typing-indicator span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-indicator span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+
+            0%,
+            60%,
+            100% {
+                transform: translateY(0);
+                opacity: 0.4;
+            }
+
+            30% {
+                transform: translateY(-6px);
+                opacity: 1;
+            }
+        }
+
+        /* ── Input Area ── */
+        .input-area {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 24px;
+            background: linear-gradient(to top, var(--bg-primary) 60%, transparent);
+            display: flex;
+            justify-content: center;
+            pointer-events: none; /* Let clicks pass through background */
+        }
+
+        .input-wrapper {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            display: flex;
+            align-items: flex-end;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 8px 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08); /* Lighter shadow for light theme */
+            pointer-events: auto; /* Re-enable clicks for the input box */
+        }
+
+        .input-wrapper textarea {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            font-size: 15px;
+            font-family: inherit;
+            resize: none;
+            padding: 10px 48px 10px 0; /* Space for button */
+            min-height: 44px;
+            max-height: 200px;
+            line-height: 1.5;
+        }
+
+        .input-wrapper textarea:focus {
+            outline: none;
+        }
+
+        .input-wrapper:focus-within {
+            border-color: var(--border-hover);
+        }
+
+        .send-btn {
+            position: absolute;
+            right: 12px;
+            bottom: 10px;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: none;
+            background: var(--accent);
+            color: var(--text-primary);
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .send-btn:hover:not(:disabled) {
+            transform: scale(1.05);
+            background: var(--accent-hover);
+        }
+
+        .send-btn:disabled {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-muted);
+            cursor: not-allowed;
+        }
+
+        /* ── Welcome ── */
+        .welcome-message {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+            text-align: center;
+            padding: 40px;
+            gap: 16px;
+        }
+
+        .welcome-icon {
+            font-size: 56px;
+            margin-bottom: 8px;
+        }
+
+        .welcome-message h3 {
+            font-size: 22px;
+            font-weight: 600;
+        }
+
+        .welcome-message p {
+            color: var(--text-muted);
+            max-width: 420px;
+            line-height: 1.6;
+            font-size: 14px;
+        }
+
+        .quick-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 12px;
+            max-width: 460px;
+            width: 100%;
+        }
+
+        .quick-action {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 14px 16px;
+            text-align: left;
+            cursor: pointer;
+            transition: border-color 0.2s, transform 0.15s, background 0.2s;
+            font-family: inherit;
+            color: inherit;
+        }
+
+        .quick-action:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+            background: rgba(99, 102, 241, 0.05);
+        }
+
+        .quick-action .qa-icon {
+            font-size: 20px;
+            margin-bottom: 6px;
+        }
+
+        .quick-action .qa-text {
+            font-size: 12px;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+
+        /* ── Scrollbar ── */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            border: 2px solid var(--bg-primary); /* invisible border for padding */
+            background-clip: padding-box;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid var(--bg-primary);
+            background-clip: padding-box;
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 900px) {
+            .app-container {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                position: fixed;
+                left: -360px;
+                top: 0;
+                bottom: 0;
+                width: 340px;
+                z-index: 100;
+                transition: left 0.3s ease;
+            }
+
+            .sidebar.open {
+                left: 0;
+            }
+
+            .mobile-toggle {
+                display: flex;
+                position: fixed;
+                top: 16px;
+                left: 16px;
+                z-index: 99;
+                width: 40px;
+                height: 40px;
+                background: var(--bg-card);
+                border: 1px solid var(--border);
+                border-radius: 10px;
+                align-items: center;
+                justify-content: center;
+                font-size: 20px;
+                cursor: pointer;
+                color: var(--text-primary);
+            }
+        }
+
+        @media (min-width: 901px) {
+            .mobile-toggle {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="ambient-bg">
+        <div class="orb"></div>
+        <div class="orb"></div>
+        <div class="orb"></div>
+    </div>
+
+    <button class="mobile-toggle" onclick="document.querySelector('.sidebar').classList.toggle('open')">☰</button>
+
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-icon">✈</div>
+                <h1>Visa AI Assistant<span>Powered by Gemini + PostgreSQL</span></h1>
+            </div>
+
+            <div class="context-section">
+                <div class="section-label">👤 Traveler Profile</div>
+                <div class="field-row">
+                    <div class="field-group">
+                        <label>Nationality</label>
+                        <input type="text" id="nationality" value="IN" placeholder="e.g. IN" maxlength="2">
+                    </div>
+                    <div class="field-group">
+                        <label>Residency</label>
+                        <input type="text" id="residencyCountry" value="IN" placeholder="e.g. AE" maxlength="2">
+                    </div>
+                </div>
+            </div>
+
+            <div class="context-section">
+                <div class="section-label">📅 Travel Details</div>
+                <div class="field-row">
+                    <div class="field-group">
+                        <label>Travel Month</label>
+                        <input type="month" id="travelMonth" value="2026-04">
+                    </div>
+                    <div class="field-group">
+                        <label>Travel Days</label>
+                        <input type="number" id="travelInDays" value="30" min="1" max="365">
+                    </div>
+                </div>
+                <div class="field-row">
+                    <div class="field-group">
+                        <label>Budget</label>
+                        <select id="budgetBand">
+                            <option value="low">low</option>
+                            <option value="mid" selected>mid</option>
+                            <option value="high">high</option>
+                        </select>
+                    </div>
+                    <div class="field-group">
+                        <label>Travel Group</label>
+                        <select id="travelGroup">
+                            <option value="solo" selected>solo</option>
+                            <option value="family">family</option>
+                            <option value="friends">friends</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="context-section">
+                <div class="section-label">🏷️ Interests</div>
+                <div class="tags-input-container" id="interestsContainer">
+                    <span class="tag">city<span class="tag-remove" onclick="removeTag(this)">×</span></span>
+                    <select onchange="addTagFromSelect(this)">
+                        <option value="" disabled selected>Add interest...</option>
+                        <option value="city">city</option>
+                        <option value="beach">beach</option>
+                        <option value="nature">nature</option>
+                        <option value="historical">historical</option>
+                        <option value="nightlife">nightlife</option>
+                        <option value="shopping">shopping</option>
+                        <option value="luxury">luxury</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="context-section">
+                <div class="section-label">📑 Visa / Permits</div>
+                <div class="tags-input-container" id="permitsContainer">
+                    <select onchange="addTagFromSelect(this)">
+                        <option value="" disabled selected>Choose an option</option>
+                        <option value="SCHENGEN">SCHENGEN</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="checkbox-field">
+                <input type="checkbox" id="stayingWithFamily">
+                <label for="stayingWithFamily">Staying with family</label>
+            </div>
+
+            <div class="status-badge connected" id="statusBadge">
+                <div class="status-dot"></div>
+                <span>API Connected — localhost:8000</span>
+            </div>
+        </aside>
+
+        <!-- Chat Area -->
+        <main class="chat-area">
+            <div class="chat-header">
+                <h2>💬 Chat</h2>
+                <p>Ask about visa eligibility, required documents, pricing, or travel recommendations</p>
+            </div>
+
+            <div class="messages-container" id="messagesContainer">
+                <div class="chat-feed-wrapper" id="chatFeedWrapper">
+                    <div class="welcome-message" id="welcomeMessage">
+                    <div class="welcome-icon">🌍</div>
+                    <h3>Welcome to the Visa AI Assistant</h3>
+                    <p>I can help you with visa eligibility, required documents, processing times, and travel
+                        recommendations. Set your traveler profile on the left and ask away!</p>
+                    <div class="quick-actions">
+                        <button class="quick-action" onclick="quickAsk('Am I eligible for UAE tourist visa?')">
+                            <div class="qa-icon">🇦🇪</div>
+                            <div class="qa-text">Am I eligible for UAE tourist visa?</div>
+                        </button>
+                        <button class="quick-action"
+                            onclick="quickAsk('What documents do I need for Saudi Arabia visa?')">
+                            <div class="qa-icon">📄</div>
+                            <div class="qa-text">Documents for Saudi Arabia visa</div>
+                        </button>
+                        <button class="quick-action" onclick="quickAsk('How much does a Turkey tourist visa cost?')">
+                            <div class="qa-icon">💰</div>
+                            <div class="qa-text">Turkey visa cost</div>
+                        </button>
+                        <button class="quick-action"
+                            onclick="quickAsk('Recommend destinations for beach and shopping')">
+                            <div class="qa-icon">🏖️</div>
+                            <div class="qa-text">Beach & shopping destinations</div>
+                        </button>
+                    </div>
+                    </div>
+                </div>
+            </div>
+            <div class="input-area">
+                <div class="input-wrapper">
+                    <textarea id="messageInput" placeholder="Ask a visa-related question..." rows="1"
+                        onkeydown="if(event.key==='Enter' && !event.shiftKey){event.preventDefault();sendMessage()}"></textarea>
+                    <button class="send-btn" id="sendBtn" onclick="sendMessage()">➤</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const API_URL = window.location.origin;
+        let chatHistory = [];
+
+        // ── Tag Management ──
+        function addTag(event, input) {
+            if (event.key !== 'Enter' || !input.value.trim()) return;
+            event.preventDefault();
+            const tag = document.createElement('span');
+            tag.className = 'tag';
+            tag.innerHTML = `${input.value.trim()}<span class="tag-remove" onclick="removeTag(this)">×</span>`;
+            input.parentElement.insertBefore(tag, input);
+            input.value = '';
+        }
+
+        function addTagFromSelect(select) {
+            const val = select.value;
+            if (!val) return;
+
+            const container = select.parentElement;
+            const existing = Array.from(container.querySelectorAll('.tag')).map(t => t.textContent.replace('×', '').trim());
+            if (existing.includes(val)) {
+                select.value = "";
+                return;
+            }
+
+            const tag = document.createElement('span');
+            tag.className = 'tag';
+            tag.innerHTML = `${val}<span class="tag-remove" onclick="removeTag(this)">×</span>`;
+            container.insertBefore(tag, select);
+            select.value = "";
+        }
+
+        function removeTag(btn) {
+            btn.parentElement.remove();
+        }
+
+        function getTags(containerId) {
+            const container = document.getElementById(containerId);
+            return Array.from(container.querySelectorAll('.tag'))
+                .map(t => t.textContent.replace('×', '').trim())
+                .filter(t => t);
+        }
+
+        // ── Build Context ──
+        function buildContext() {
+            const ctx = {};
+            const nat = document.getElementById('nationality').value.trim().toUpperCase();
+            if (nat) ctx.nationality = nat;
+
+            const res = document.getElementById('residencyCountry').value.trim().toUpperCase();
+            if (res) ctx.residencyCountry = res;
+
+            const tm = document.getElementById('travelMonth').value;
+            if (tm) ctx.travelMonth = tm;
+
+            const td = parseInt(document.getElementById('travelInDays').value);
+            if (td) ctx.travelInDays = td;
+
+            const budget = document.getElementById('budgetBand').value;
+            if (budget) ctx.budgetBand = budget;
+
+            const group = document.getElementById('travelGroup').value;
+            if (group) ctx.travelGroup = group;
+
+            const interests = getTags('interestsContainer');
+            if (interests.length) ctx.interests = interests;
+
+            const permits = getTags('permitsContainer');
+            if (permits.length) ctx.hasVisaOrPermit = permits;
+
+            const family = document.getElementById('stayingWithFamily').checked;
+            if (family) ctx.stayingWithFamily = true;
+
+            return ctx;
+        }
+
+        // ── Message Rendering ──
+        function addMessage(role, content, extra = null) {
+            const welcome = document.getElementById('welcomeMessage');
+            if (welcome) welcome.style.display = 'none';
+
+            const container = document.getElementById('messagesContainer');
+            const wrapper = document.getElementById('chatFeedWrapper');
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `message ${role}`;
+
+            const avatar = role === 'user' ? '👤' : '✈';
+            const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+            msgDiv.innerHTML = `
+                <div class="message-avatar">${avatar}</div>
+                <div class="message-content">
+                    <div class="message-bubble">${content}</div>
+                    <div class="message-meta">${time}</div>
+                </div>
+            `;
+
+            wrapper.appendChild(msgDiv);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function showTyping() {
+            const container = document.getElementById('messagesContainer');
+            const wrapper = document.getElementById('chatFeedWrapper');
+            const typing = document.createElement('div');
+            typing.className = 'message bot';
+            typing.id = 'typingIndicator';
+            typing.innerHTML = `
+                <div class="message-avatar">✈</div>
+                <div class="message-content">
+                    <div class="message-bubble">
+                        <div class="typing-indicator"><span></span><span></span><span></span></div>
+                    </div>
+                </div>
+            `;
+            wrapper.appendChild(typing);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function hideTyping() {
+            const el = document.getElementById('typingIndicator');
+            if (el) el.remove();
+        }
+
+        // ── Send Message ──
+        async function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            if (!message) return;
+
+            input.value = '';
+            input.style.height = 'auto';
+            document.getElementById('sendBtn').disabled = true;
+
+            addMessage('user', message);
+            showTyping();
+
+            try {
+                const response = await fetch(`${API_URL}/vendor/chat`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message, context: buildContext(), history: chatHistory })
+                });
+
+                hideTyping();
+
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+                const data = await response.json();
+                addMessage('bot', data.answerText || 'No response received.', data);
+
+                chatHistory.push({ role: 'user', content: message });
+                if (data.answerText) {
+                    chatHistory.push({ role: 'bot', content: data.answerText });
+                }
+            } catch (err) {
+                hideTyping();
+                addMessage('bot', `❌ Error: ${err.message}. Make sure the API is running at ${API_URL}`);
+                document.getElementById('statusBadge').className = 'status-badge disconnected';
+                document.getElementById('statusBadge').querySelector('span').textContent = 'API Disconnected';
+            }
+
+            document.getElementById('sendBtn').disabled = false;
+            input.focus();
+        }
+
+        function quickAsk(text) {
+            document.getElementById('messageInput').value = text;
+            sendMessage();
+        }
+
+        // ── Auto-resize textarea ──
+        document.getElementById('messageInput').addEventListener('input', function () {
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+        });
+
+        // ── Health check ──
+        async function checkHealth() {
+            try {
+                const res = await fetch(`${API_URL}/health`);
+                const data = await res.json();
+                const badge = document.getElementById('statusBadge');
+                badge.className = 'status-badge connected';
+                badge.querySelector('span').textContent = `API Connected — ${data.gemini_configured ? 'Gemini Active' : 'Gemini Not Set'}`;
+            } catch {
+                const badge = document.getElementById('statusBadge');
+                badge.className = 'status-badge disconnected';
+                badge.querySelector('span').textContent = 'API Disconnected';
+            }
+        }
+        checkHealth();
+        setInterval(checkHealth, 15000);
+    </script>
+</body>
+
+</html>
