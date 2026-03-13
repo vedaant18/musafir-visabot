@@ -99,7 +99,7 @@ def _extract_destination(message: str) -> str | None:
     """Extract destination country code from user message."""
     msg_lower = message.lower()
     for name, code in sorted(COUNTRY_CODE_LOOKUP.items(), key=lambda x: -len(x[0])):
-        if name in msg_lower:
+        if re.search(r'\b' + re.escape(name) + r'\b', msg_lower):
             return code
     return None
 
