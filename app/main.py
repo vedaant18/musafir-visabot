@@ -5,6 +5,7 @@ Exposes POST /vendor/chat matching the Streamlit harness contract.
 """
 
 import os
+import json
 import re
 import time
 import logging
@@ -25,6 +26,8 @@ logging.basicConfig(level=settings.log_level)
 logger = logging.getLogger(__name__)
 
 
+SUPPORTED_COUNTRIES = set()
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Startup: seed database and build embeddings."""
@@ -32,6 +35,15 @@ async def lifespan(app: FastAPI):
     try:
         copy_data_files()
         seed_database()
+        
+        # Load supported countries for strict validation
+        dest_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data", "destination.json")
+        if os.path.exists(dest_path):
+            with open(dest_path, "r", encoding="utf-8") as f:
+                dests = json.load(f)
+                for d in dests:
+                    SUPPORTED_COUNTRIES.add(d["destinationCountryCode"])
+            logger.info(f"Loaded supported countries: {SUPPORTED_COUNTRIES}")
     except Exception as e:
         logger.error(f"Database seeding failed: {e}")
 
@@ -192,6 +204,17 @@ async def vendor_chat(request: ChatRequest):
     intent = _classify_intent(message, context)
 
     logger.info(f"Question: {original_message} | Rewritten: {message} | Intent: {intent}")
+
+    # ── Restrict to Supported Countries ──
+    extracted_dest = _extract_destination(message)
+    if extracted_dest and extracted_dest not in SUPPORTED_COUNTRIES:
+        latency = int((time.time() - start_time) * 1000)
+        return ChatResponse(
+            answerText="Sorry, I currently only have visa information for a limited set of countries. I cannot provide visa details for that destination yet.",
+            final=FinalResult(),
+            trace=Trace(retrieved={"unsupported_destination": extracted_dest}),
+            meta=Meta(latencyMs=latency),
+        )
 
     # ── Handle unsupported queries ──
     if intent == "unsupported":
