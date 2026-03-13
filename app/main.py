@@ -351,9 +351,8 @@ async def vendor_chat(request: ChatRequest):
 
 
 @app.get("/health")
-async def health():
-    """Health check endpoint."""
-    return {"status": "ok", "gemini_configured": bool(settings.gemini_api_key)}
+def health_check():
+    return {"status": "ok", "gemini_configured": bool(settings.gemini_api_key), "supported_countries": list(SUPPORTED_COUNTRIES)}
 
 
 @app.get("/")
