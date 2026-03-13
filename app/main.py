@@ -28,22 +28,28 @@ logger = logging.getLogger(__name__)
 
 SUPPORTED_COUNTRIES = set()
 
+def load_supported_countries():
+    """Load dynamically supported countries directly from the SKU file."""
+    try:
+        dest_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data", "visasku.json")
+        if os.path.exists(dest_path):
+            with open(dest_path, "r", encoding="utf-8") as f:
+                skus = json.load(f)
+                for sku in skus:
+                    SUPPORTED_COUNTRIES.add(sku["countryCode"])
+            logger.info(f"Loaded supported countries: {SUPPORTED_COUNTRIES}")
+    except Exception as e:
+        logger.error(f"Failed to load supported countries: {e}")
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Startup: seed database and build embeddings."""
+    load_supported_countries()
+    
     logger.info("Starting up — seeding database...")
     try:
         copy_data_files()
         seed_database()
-        
-        # Load supported countries for strict validation
-        dest_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data", "destination.json")
-        if os.path.exists(dest_path):
-            with open(dest_path, "r", encoding="utf-8") as f:
-                dests = json.load(f)
-                for d in dests:
-                    SUPPORTED_COUNTRIES.add(d["destinationCountryCode"])
-            logger.info(f"Loaded supported countries: {SUPPORTED_COUNTRIES}")
     except Exception as e:
         logger.error(f"Database seeding failed: {e}")
 
