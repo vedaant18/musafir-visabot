@@ -24,6 +24,18 @@ def seed_database():
     engine = create_engine(sync_url)
 
     with engine.begin() as conn:
+        # Run the init.sql script to ensure all tables exist
+        project_root = os.path.dirname(os.path.dirname(__file__))
+        init_sql_path = os.path.join(project_root, "db", "init.sql")
+        
+        if os.path.exists(init_sql_path):
+            logger.info("Running init.sql to ensure database schema exists...")
+            with open(init_sql_path, "r", encoding="utf-8") as f:
+                sql_statements = f.read()
+                # Split by semicolon to execute individually, but pgvector CREATE EXTENSION works better as a single batch if supported, or individual.
+                # SQLAlchemy text() handles multiple statements separated by ';'
+                conn.execute(text(sql_statements))
+
         # Check if already seeded
         result = conn.execute(text("SELECT COUNT(*) FROM visa_skus"))
         if result.scalar() > 0:
