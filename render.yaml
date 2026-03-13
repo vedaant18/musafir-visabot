@@ -1,10 +1,10 @@
-services:
+databases:
   # ── PostgreSQL Database (with pgvector) ──
-  - type: psql
-    name: visabot-db
+  - name: visabot-db
     plan: free # Change to starter for production
     postgresMajorVersion: 16
-    
+
+services:
   # ── Web Application ──
   - type: web
     name: visa-ragbot-api
