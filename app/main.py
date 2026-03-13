@@ -238,9 +238,18 @@ async def vendor_chat(request: ChatRequest):
         # Also use interest-based matching
         dest_matches = get_destinations_for_interests(interests) if interests else []
 
-        # Get destination country codes
-        dest_codes = [d["countryCode"] for d in dest_matches[:5]]
-
+        # Evaluate eligibility for each matched destination
+        final_dests = []
+        final_skus = []
+        final_docs = []
+        for d in dest_matches[:5]:
+            code = d['countryCode']
+            rule_res = evaluate_for_destination(code, context, "tourist")
+            if rule_res.eligible:
+                final_dests.append(code)
+                final_skus.extend(rule_res.sku_codes)
+                final_docs.extend(rule_res.documents)
+                
         # Generate LLM response
         answer_text = ""
         if settings.gemini_api_key:
@@ -252,18 +261,19 @@ async def vendor_chat(request: ChatRequest):
                 history=request.history,
             )
         else:
-            if dest_matches:
+            if final_dests:
                 parts = ["Based on your interests, here are some recommended destinations:"]
                 for d in dest_matches[:5]:
-                    parts.append(f"- {d['countryName']} ({d['countryCode']}): {', '.join(d['matchedInterests'])}")
-                answer_text = "\n".join(parts)
+                    if d['countryCode'] in final_dests:
+                        parts.append(f"- {d['countryName']} ({d['countryCode']}): {', '.join(d['matchedInterests'])}")
+                answer_text = "\\n".join(parts)
             else:
-                answer_text = "I couldn't find matching destinations for your interests."
+                answer_text = "I couldn't find any eligible destinations matching your interests."
 
         latency = int((time.time() - start_time) * 1000)
         return ChatResponse(
             answerText=answer_text,
-            final=FinalResult(destinations=dest_codes),
+            final=FinalResult(destinations=final_dests, skuCodes=final_skus, documents=final_docs),
             trace=Trace(
                 retrieved={"interests": interests, "rag_results": len(rag_chunks)},
                 matchedRules=[],
