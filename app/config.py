@@ -21,3 +21,12 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
+
+# Fix Render's connection string format for SQLAlchemy
+if settings.database_url.startswith("postgres://"):
+    settings.database_url = settings.database_url.replace("postgres://", "postgresql+asyncpg://", 1)
+elif settings.database_url.startswith("postgresql://") and "asyncpg" not in settings.database_url:
+    settings.database_url = settings.database_url.replace("postgresql://", "postgresql+asyncpg://", 1)
+
+if settings.sync_database_url.startswith("postgres://"):
+    settings.sync_database_url = settings.sync_database_url.replace("postgres://", "postgresql://", 1)
