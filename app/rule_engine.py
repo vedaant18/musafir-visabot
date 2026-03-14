@@ -29,8 +29,9 @@ class RuleEngineResult:
         self.final_price: float = 0
         self.price_currency: str = "AED"
         self.matched_rules: list[str] = []
-        self.applied_adjustments: list[str] = []
+        self.applied_adjustments: list[dict] = []
         self.ineligibility_reason: str = ""
+        self.min_lead_time_days: Optional[int] = None
 
 
 def _matches_condition(condition: dict, context: UserContext) -> bool:
@@ -72,6 +73,7 @@ def evaluate_for_destination(
     destination_country_code: str,
     context: UserContext,
     purpose: Optional[str] = None,
+    mode: str = "standard",
 ) -> RuleEngineResult:
     """
     Evaluate all rules for a given destination and user context.
@@ -97,10 +99,11 @@ def evaluate_for_destination(
         # ── 1. Get destination-market config ──
         row = conn.execute(
             text("""
-                SELECT minimum_documents, visa_mode_rules, document_rules, pricing_adjustments
-                FROM destination_market
-                WHERE destination_country_code = :cc AND status = 'active'
-                ORDER BY version DESC LIMIT 1
+                SELECT dm.minimum_documents, dm.visa_mode_rules, dm.document_rules, dm.pricing_adjustments, d.min_processing_days
+                FROM destination_market dm
+                JOIN destinations d ON d.country_code = dm.destination_country_code
+                WHERE dm.destination_country_code = :cc AND dm.status = 'active'
+                ORDER BY dm.version DESC LIMIT 1
             """),
             {"cc": destination_country_code},
         ).fetchone()
@@ -115,6 +118,7 @@ def evaluate_for_destination(
         visa_mode_rules = json.loads(row[1]) if isinstance(row[1], str) else row[1]
         document_rules = json.loads(row[2]) if isinstance(row[2], str) else row[2]
         pricing_adjustments = json.loads(row[3]) if isinstance(row[3], str) else row[3]
+        result.min_lead_time_days = row[4]
 
         # ── 2. Get matching SKUs ──
         sku_rows = conn.execute(
@@ -137,10 +141,10 @@ def evaluate_for_destination(
         all_sku_codes = [r[1] for r in sku_rows]
         result.sku_codes = list(all_sku_codes)
 
-        # Use standard speed SKU as default
+        # Use requested speed SKU as default
         default_sku = sku_rows[0]
         for sku in sku_rows:
-            if sku[3] == "standard":
+            if sku[3] == mode:
                 default_sku = sku
                 break
 
@@ -185,6 +189,7 @@ def evaluate_for_destination(
             doc_map[doc["docCode"]] = DocumentRef(
                 docCode=doc["docCode"],
                 mandatory=doc.get("mandatory", True),
+                notes=doc.get("notes")
             )
 
         # Apply document rules sorted by priority
@@ -205,6 +210,7 @@ def evaluate_for_destination(
                     doc_map[doc["docCode"]] = DocumentRef(
                         docCode=doc["docCode"],
                         mandatory=doc.get("mandatory", True),
+                        notes=doc.get("notes")
                     )
 
                 # Remove documents
@@ -223,8 +229,8 @@ def evaluate_for_destination(
                 # Modify document notes (we track docCode, mandatory only)
                 for doc in rule.get("modifyDocuments", []):
                     if doc["docCode"] in doc_map:
-                        # Keep existing mandatory, just note the modification
-                        pass
+                        if "notes" in doc:
+                            doc_map[doc["docCode"]].notes = doc["notes"]
 
         result.documents = list(doc_map.values())
 
@@ -247,9 +253,10 @@ def evaluate_for_destination(
                 elif adj_type == "subtract_amount":
                     result.final_price -= adj_value
 
-                result.applied_adjustments.append(
-                    f"{rule.get('ruleId', 'unknown')}: {adj_type} {adj_value} {adjustment.get('currency', '')}"
-                )
+                result.applied_adjustments.append({
+                    "ruleId": rule.get('ruleId', 'unknown'),
+                    "value": adj_value
+                })
                 result.matched_rules.append(rule.get("ruleId", rule.get("ruleName", "unknown")))
 
     engine.dispose()

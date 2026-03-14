@@ -39,6 +39,7 @@ class DocumentRef(BaseModel):
     """A required document reference."""
     docCode: str
     mandatory: bool
+    notes: Optional[str] = None
 
 
 class FinalResult(BaseModel):
@@ -47,13 +48,14 @@ class FinalResult(BaseModel):
     skuCodes: list[str] = Field(default_factory=list)
     documents: list[DocumentRef] = Field(default_factory=list)
     processingTimeDays: int = 0
+    minLeadTimeDays: Optional[int] = None
 
 
 class Trace(BaseModel):
     """Debugging / traceability info."""
     retrieved: dict = Field(default_factory=dict)
     matchedRules: list[str] = Field(default_factory=list)
-    appliedAdjustments: list[str] = Field(default_factory=list)
+    appliedAdjustments: list[dict] = Field(default_factory=list)
 
 
 class Meta(BaseModel):

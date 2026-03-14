@@ -237,7 +237,17 @@ async def vendor_chat(request: ChatRequest):
 
     # ── Handle travel recommendations ──
     if intent == "travel_recommendation":
+        msg_lower = message.lower()
         interests = context.interests if context and context.interests else []
+
+        # Fallback if no explicit interests but user mentioned something
+        if not interests:
+            if "cheap" in msg_lower or "budget" in msg_lower or "low" in msg_lower:
+                interests = ["city", "shopping"]
+            elif "fast" in msg_lower or "quick" in msg_lower:
+                interests = ["city", "beach"]
+            else:
+                interests = ["city", "nature", "beach", "historical", "shopping", "luxury"]
 
         # Use RAG to find relevant destinations
         rag_chunks = []
@@ -245,7 +255,8 @@ async def vendor_chat(request: ChatRequest):
             rag_chunks = search_similar(message, top_k=5, source_type="destination")
 
         # Also use interest-based matching
-        dest_matches = get_destinations_for_interests(interests) if interests else []
+        all_dest_matches = get_destinations_for_interests(interests) if interests else []
+        dest_matches = [d for d in all_dest_matches if d['countryCode'] in SUPPORTED_COUNTRIES]
 
         # Evaluate eligibility for each matched destination
         final_dests = []
@@ -293,6 +304,11 @@ async def vendor_chat(request: ChatRequest):
     # ── Handle eligibility, documents, pricing, processing time, general visa queries ──
     destination = _extract_destination(message)
     purpose = _extract_purpose(message)
+    
+    speed_mode = "standard"
+    msg_l = message.lower()
+    if "express" in msg_l or "fast" in msg_l or "quick" in msg_l:
+        speed_mode = "express"
 
     if not destination:
         # Try to infer from context interests or just provide general info
@@ -320,7 +336,7 @@ async def vendor_chat(request: ChatRequest):
         )
 
     # ── Run rule engine ──
-    rule_result = evaluate_for_destination(destination, context, purpose)
+    rule_result = evaluate_for_destination(destination, context, purpose, mode=speed_mode)
 
     # ── Get RAG chunks for additional context ──
     rag_chunks = []
@@ -352,13 +368,17 @@ async def vendor_chat(request: ChatRequest):
 
     # ── Build response ──
     latency = int((time.time() - start_time) * 1000)
+    
+    final_dests = rule_result.destinations if rule_result.eligible else [destination]
+    
     return ChatResponse(
         answerText=answer_text,
         final=FinalResult(
-            destinations=rule_result.destinations if rule_result.eligible else [],
+            destinations=final_dests,
             skuCodes=rule_result.sku_codes if rule_result.eligible else [],
             documents=rule_result.documents if rule_result.eligible else [],
             processingTimeDays=rule_result.processing_time_days if rule_result.eligible else 0,
+            minLeadTimeDays=rule_result.min_lead_time_days if rule_result.eligible else None
         ),
         trace=Trace(
             retrieved={"destination": destination, "purpose": purpose, "intent": intent},

@@ -177,8 +177,8 @@ def _build_human_readable_context(
 
             # Documents (humanized)
             if rule_result.documents:
-                mandatory = [_humanize_doc(d.docCode) for d in rule_result.documents if d.mandatory]
-                optional = [_humanize_doc(d.docCode) for d in rule_result.documents if not d.mandatory]
+                mandatory = [f"{_humanize_doc(d.docCode)}" + (f" (Note: {d.notes})" if d.notes else "") for d in rule_result.documents if d.mandatory]
+                optional = [f"{_humanize_doc(d.docCode)}" + (f" (Note: {d.notes})" if d.notes else "") for d in rule_result.documents if not d.mandatory]
                 if mandatory:
                     section.append("  Required documents: " + ", ".join(mandatory))
                 if optional:
@@ -188,15 +188,12 @@ def _build_human_readable_context(
             if rule_result.applied_adjustments:
                 adj_descriptions = []
                 for adj in rule_result.applied_adjustments:
-                    # Parse "AE_PA_001: add_amount 17 AED" into human-readable
-                    if "add_amount" in adj:
-                        try:
-                            amt_part = adj.split("add_amount")[1].strip()
-                            adj_descriptions.append(f"Additional fee of {amt_part} applied")
-                        except Exception:
+                    if isinstance(adj, dict):
+                        val = adj.get('value', '')
+                        if val:
+                            adj_descriptions.append(f"A pricing adjustment of {val} was applied")
+                        else:
                             adj_descriptions.append("A pricing adjustment was applied")
-                    elif "discount" in adj.lower():
-                        adj_descriptions.append("A discount was applied")
                     else:
                         adj_descriptions.append("A pricing adjustment was applied")
                 if adj_descriptions:
