@@ -147,14 +147,17 @@ def _classify_intent(message: str, context) -> str:
     visa_related_words = ["visa", "travel", "trip", "visit", "tourism", "tourist",
                           "eligible", "document", "passport", "apply", "entry",
                           "processing", "price", "cost", "fee", "stay", "destination",
-                          "recommend", "suggest", "country"]
+                          "recommend", "suggest", "country", "vacation", "holiday",
+                          "flight", "beach", "city", "nature", "historical", "somewhere",
+                          "somewhere with", "want to go"]
     if any(kw in msg_lower for kw in non_visa_keywords) and not any(kw in msg_lower for kw in visa_related_words):
         return "unsupported"
 
     # Travel recommendation queries
     travel_keywords = ["recommend", "suggest", "where should", "best destination",
                        "where can i go", "travel to", "which country",
-                       "interested in", "looking for"]
+                       "interested in", "looking for", "want to go", "somewhere",
+                       "some where", "places to", "vacation"]
     if any(kw in msg_lower for kw in travel_keywords) and not _extract_destination(message):
         return "travel_recommendation"
 
